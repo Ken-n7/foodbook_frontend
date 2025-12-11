@@ -1,0 +1,60 @@
+/* Remove Bootstrap input outline */
+.search-wrapper input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Orange icons */
+.nav-icon {
+    font-size: 26px;
+    color: #ff7a00;
+    cursor: pointer;
+}
+
+/* Profile picture */
+.profile-img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid #ff7a00;
+    object-fit: cover;
+}
+
+i{
+  color: #ff7a00;
+}
+
+
+/* NAV LINKS */
+.nav-link {
+  font-size: 15px;
+  color: #5a5a5a !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+}
+
+/* BUTTONS */
+.btn-orange {
+  background-color: #f27b2c;
+  color: white;
+  padding: 8px 22px;
+  border-radius: 8px;
+  transition: 0.25s ease;
+}
+
+.btn-orange:hover {
+  background-color: #d46823;
+}
+
+.btn-outline-orange {
+  border: 2px solid #f27b2c;
+  color: #f27b2c;
+  padding: 8px 22px;
+  border-radius: 8px;
+  transition: 0.25s ease;
+}
+
+.btn-outline-orange:hover {
+  background-color: #f27b2c;
+  color: white;
+}

@@ -1,0 +1,19 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    container_name: dev_foodbook
+    ports:
+      - "4200:4200"
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  prod:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: prod_foodbook
+    ports:
+      - "80:80"

@@ -1,0 +1,71 @@
+
+.nav-link:hover {
+  color: #f27b2c !important;
+}
+
+
+/* Modal Styling */
+.custom-modal-dialog {
+  max-width: 400px; /* Adjust width to match image */
+}
+
+.custom-modal-content {
+  border-radius: 20px; /* Rounded corners for the modal */
+  border: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Label Styling */
+.custom-label {
+  font-weight: 700; /* Bold labels */
+  color: #333;
+  margin-bottom: 8px;
+}
+
+/* Input Field Styling */
+.custom-input {
+  background-color: #e0e0e0; /* Gray background */
+  border: 1px solid #ccc; /* Subtle border */
+  border-radius: 10px; /* Rounded corners for inputs */
+  padding: 12px 15px; /* Height and padding */
+  font-size: 16px;
+}
+
+.custom-input:focus {
+  background-color: #e0e0e0; /* Keep gray on focus */
+  box-shadow: none; /* Remove default Bootstrap shadow */
+  border-color: #aaa;
+}
+
+/* "or" Separator */
+.divider-text {
+  color: #777;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+/* Google Button Styling */
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 2px solid #ccc; /* Gray border */
+  border-radius: 10px; /* Rounded corners */
+  padding: 12px;
+  font-weight: 700;
+  color: #555;
+  font-size: 18px;
+  transition: all 0.2s ease-in-out;
+}
+
+.google-btn:hover {
+  background-color: #f8f9fa;
+  border-color: #bbb;
+}
+
+.google-icon {
+  width: 24px; /* Size of the Google G */
+  height: 24px;
+  margin-left: 10px;
+}

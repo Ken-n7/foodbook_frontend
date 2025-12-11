@@ -1,0 +1,20 @@
+<!-- <app-header></app-header> -->
+<app-create-post></app-create-post>
+
+<div class="container py-3">
+
+  <h2>Restaurants</h2>
+
+  <div *ngIf="loading">Loading...</div>
+
+  <div *ngIf="!loading && restaurants.length === 0">
+    No restaurants found.
+  </div>
+
+  <ul *ngIf="!loading && restaurants.length > 0">
+    <li *ngFor="let r of restaurants">
+      {{ r.name }} — ({{ r.latitude }}, {{ r.longitude }})
+    </li>
+  </ul>
+
+</div>

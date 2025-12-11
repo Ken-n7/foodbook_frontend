@@ -1,0 +1,44 @@
+<nav class="navbar shadow-sm px-4 py-2 bg-white">
+  <div class="container-fluid d-flex align-items-center justify-content-between">
+
+    <app-logo></app-logo>
+
+    <!-- visible only if logged in -->
+    <app-search-bar *ngIf="auth.isLoggedIn()"></app-search-bar>
+
+    <div class="d-flex align-items-center gap-4">
+
+      <!-- authorized content -->
+      <ng-container *ngIf="auth.isLoggedIn(); else loggedOut">
+
+        <i class="bi bi-house fs-4"></i>
+
+        <i class="bi bi-bell fs-4"></i>
+
+        <img
+          src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d"
+          class="profile-img"
+          alt="Profile"
+        >
+
+        <button class="btn btn-outline-orange" [routerLink]="['/logout']">
+          Logout
+        </button>
+      </ng-container>
+
+      <!-- unauthorized -->
+      <ng-template #loggedOut>
+        <div class="d-flex gap-3">
+          <button class="btn btn-outline-orange" data-bs-toggle="modal" data-bs-target="#signupModal">
+            Sign Up
+          </button>
+
+          <button class="btn btn-outline-orange" data-bs-toggle="modal" data-bs-target="#loginModal">
+            Log In
+          </button>
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+</nav>

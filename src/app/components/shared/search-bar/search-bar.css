@@ -1,0 +1,9 @@
+/* Search bar container */
+.search-wrapper {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    height: 42px;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.15);
+}

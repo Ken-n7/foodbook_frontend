@@ -1,0 +1,39 @@
+<div class="modal fade" id="signupModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered custom-modal-dialog">
+    <div class="modal-content custom-modal-content">
+      <div class="modal-body p-4">
+
+        <form (ngSubmit)="submit()" [formGroup]="form">
+
+          <div class="mb-3">
+            <label for="signupEmail" class="form-label custom-label">Name</label>
+            <input type="name" formControlName="name" class="form-control custom-input">
+          </div>
+
+          <div class="mb-3">
+            <label for="signupEmail" class="form-label custom-label">Email Address</label>
+            <input type="email" formControlName="email" class="form-control custom-input">
+          </div>
+
+          <div class="mb-3">
+            <label for="signupPassword" class="form-label custom-label">Password</label>
+            <input type="password" formControlName="password" class="form-control custom-input">
+          </div>
+
+          <button type="submit" [disabled]="loading || form.invalid" class="btn btn-primary w-100 mb-3 action-btn">
+            Sign Up
+          </button>
+
+          <div class="text-center mb-3 divider-text">or</div>
+
+          <button type="button" class="btn google-btn w-100">
+            <span>Sign in with Google</span>
+            <!-- <img src="assets/google-g-logo.svg" alt="Google" class="google-icon"> -->
+          </button>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>

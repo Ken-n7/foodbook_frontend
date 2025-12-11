@@ -1,0 +1,56 @@
+.footer-section {
+  border-top: 2px solid #e6e6e6;
+  background: #ffffff;
+  margin-top: 50px;
+}
+
+/* LOGO */
+.logo-icon {
+  font-size: 32px;
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f27b2c;
+}
+
+.logo-text span {
+  color: #ffa45c;
+}
+
+/* SOCIAL ICONS */
+.social-icon {
+  font-size: 22px;
+  cursor: pointer;
+  color: #000;
+  transition: 0.2s ease;
+}
+
+.social-icon:hover {
+  color: #f27b2c;
+}
+
+/* FOOTER HEADINGS */
+.footer-heading {
+  font-weight: 700;
+  font-size: 18px;
+  color: #222;
+}
+
+/* EMAIL TEXT */
+.footer-email {
+  color: #000;
+  text-decoration: underline;
+  font-size: 15px;
+}
+
+.footer-email:hover {
+  color: #f27b2c;
+}
+
+/* COPYRIGHT TEXT */
+.rights-text {
+  font-size: 15px;
+  color: #333;
+}

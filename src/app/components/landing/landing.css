@@ -1,0 +1,79 @@
+/* HERO SECTION */
+.hero-section {
+  margin-top: 150px;
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #1a1a1a;
+}
+
+.hero-text {
+  color: #555;
+  font-size: 16px;
+  max-width: 400px;
+  margin-top: 20px;
+}
+
+/* CTA BUTTON */
+.btn-orange-cta {
+  background-color: #f07c26;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-orange-cta:hover {
+  background-color: #d5671f;
+}
+
+/* RIGHT-IMAGE FOOD CARD */
+.food-card {
+  width: 330px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  transform: rotate(8deg);
+}
+
+.food-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* FEATURE CARDS */
+.features-section {
+  margin-top: 80px;
+}
+
+.feature-card {
+  background: #fff;
+  padding: 35px 25px;
+  text-align: center;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  width: 280px;
+}
+
+.feature-icon {
+  font-size: 32px;
+  color: #f07c26;
+  margin-bottom: 10px;
+}
+
+.feature-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f07c26;
+}
+
+.feature-text {
+  font-size: 14px;
+  margin-top: 10px;
+  color: #555;
+}
