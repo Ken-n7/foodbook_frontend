@@ -1,0 +1,175 @@
+<!-- Proper Bootstrap modal with fixed black screen issue -->
+<div #modalElement
+     class="modal fade d-block"
+     tabindex="-1"
+     role="dialog"
+     style="background-color: rgba(0, 0, 0, 0.5);"
+     (click)="onBackdropClick($event)"
+     [class.show]="true">
+
+  <!-- Modal dialog (the actual white/visible card) -->
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-animation"
+       [class.modal-fullscreen]="isTheaterMode && hasMedia"
+       [class.modal-portrait]="!isTheaterMode && hasMedia"
+       [class.modal-xl]="!isTheaterMode && !hasMedia"
+       role="document">
+
+    <div class="modal-content light-theme overflow-hidden">
+
+      <!-- Close button -->
+      <button type="button"
+              class="btn-close position-absolute top-0 end-0 m-3 z-3"
+              aria-label="Close"
+              (click)="close.emit()">
+      </button>
+      <!-- THEATER MODE: Full-screen, landscape layout (media left, sidebar right on lg+) -->
+      <div class="row g-0 h-100 theater-mode-content" *ngIf="isTheaterMode && hasMedia">
+
+        <!-- Media Section -->
+        <div class="col-lg-8 media-container d-flex align-items-center justify-content-center bg-black position-relative">
+          <div class="carousel slide w-100 h-100" data-bs-ride="false" data-bs-touch="true" data-bs-keyboard="true">
+            <div class="carousel-inner h-100">
+              <div class="carousel-item h-100 d-flex align-items-center justify-content-center" [class.active]="i === currentMediaIndex"
+                *ngFor="let item of mediaItems; let i = index">
+                <img *ngIf="item.type === 'image'" [src]="item.url" class="object-fit-contain" [alt]="'Media ' + (i+1)"
+                  style="max-height: 100vh; max-width: 100%;">
+                <video *ngIf="item.type === 'video'" [src]="item.url" class="object-fit-contain" controls autoplay loop muted
+                  style="max-height: 100vh; max-width: 100%;" aria-label="Video media"></video>
+              </div>
+            </div>
+            <!-- Carousel controls -->
+            <button class="carousel-control-prev" type="button" (click)="prevMedia()" *ngIf="hasMultipleMedia" aria-label="Previous"></button>
+            <button class="carousel-control-next" type="button" (click)="nextMedia()" *ngIf="hasMultipleMedia" aria-label="Next"></button>
+            <!-- Indicators -->
+            <div class="carousel-indicators bottom-3" *ngIf="hasMultipleMedia">
+              <button *ngFor="let item of mediaItems; let i = index" type="button"
+                [class.active]="i === currentMediaIndex" (click)="goToMedia(i)" [attr.aria-label]="'Slide ' + (i+1)"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4 d-flex flex-column bg-white border-start">
+          <div class="flex-grow-1 overflow-auto sidebar-content p-4">
+            <!-- User Info -->
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <ng-container *ngIf="post.user.profile_picture; else avatarFallback">
+                <img [src]="post.user.profile_picture" class="rounded-circle" width="42" height="42" [alt]="post.user.name + ' profile'">
+              </ng-container>
+              <ng-template #avatarFallback>
+                <div class="user-avatar rounded-circle d-flex align-items-center justify-content-center fw-bold"> {{ post.user.name.charAt(0) }} </div>
+              </ng-template>
+              <div>
+                <h5 class="mb-0 fw-bold">{{ post.user.name }}</h5>
+                <small class="text-muted" *ngIf="post.restaurant"><i class="bi bi-geo-alt-fill me-1"></i>{{ post.restaurant.name }}</small>
+              </div>
+            </div>
+            <hr class="content-divider">
+            <p class="mb-4" *ngIf="post.caption">{{ post.caption }}</p>
+            <hr class="content-divider">
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-around py-3 border-top border-bottom">
+              <button class="btn action-btn d-flex align-items-center gap-2" (click)="toggleLike()" [class.text-orange]="post.is_liked">
+                <i class="bi fs-5" [ngClass]="{'bi-heart-fill': post.is_liked, 'bi-heart': !post.is_liked}"></i>
+                <span>{{ post.likes_count }}</span>
+              </button>
+              <button class="btn action-btn d-flex align-items-center gap-2">
+                <i class="bi bi-chat-dots fs-5"></i>
+                <span>{{ post.comments_count }}</span>
+              </button>
+              <button class="btn action-btn d-flex align-items-center gap-2">
+                <i class="bi bi-share fs-5"></i>
+                <span>Share</span>
+              </button>
+            </div>
+            <hr class="content-divider">
+
+            <h6 class="fw-semibold mb-3">Comments</h6>
+            <div class="text-muted small">No comments yet.</div>
+          </div>
+
+          <!-- Comment Input -->
+          <div class="border-top p-3 bg-white">
+            <div class="input-group rounded-pill border border-orange">
+              <input [(ngModel)]="newComment" class="form-control border-0" placeholder="Add a comment..." (keydown.enter)="addComment()">
+              <button class="btn btn-orange rounded-pill px-4" (click)="addComment()" [disabled]="!newComment.trim()">
+                <i class="bi bi-send-fill"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NORMAL MODE: Portrait-style modal on desktop when not in theater mode -->
+      <div class="normal-mode-content d-flex flex-column" *ngIf="!isTheaterMode || !hasMedia">
+
+        <!-- Media Preview – now respects original aspect ratio -->
+        <div *ngIf="hasMedia" class="media-preview-container bg-black position-relative cursor-pointer"
+             (click)="toggleTheaterMode()" role="button" aria-label="Enter fullscreen">
+          <img *ngIf="currentMedia?.type === 'image'" [src]="currentMedia!.url" class="media-preview-img" [alt]="'Post image preview'">
+          <video *ngIf="currentMedia?.type === 'video'" [src]="currentMedia!.url" class="media-preview-img" controls muted aria-label="Video preview"></video>
+
+          <!-- Fullscreen hint -->
+          <div class="position-absolute bottom-0 start-50 translate-middle-x mb-3 bg-dark bg-opacity-70 text-white px-3 py-2 rounded-pill zoom-hint">
+            <i class="bi bi-arrows-fullscreen me-2"></i>Tap for fullscreen
+          </div>
+
+          <!-- Media counter -->
+          <div class="position-absolute top-0 end-0 m-3 bg-dark bg-opacity-70 text-white px-3 py-2 rounded-pill small" *ngIf="hasMultipleMedia">
+            {{ currentMediaIndex + 1 }} / {{ mediaItems.length }}
+          </div>
+        </div>
+
+        <!-- Content Section (scrollable) -->
+        <div class="p-4 flex-grow-1 overflow-auto">
+          <!-- User Info -->
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <ng-container *ngIf="post.user.profile_picture; else avatarNormal">
+              <img [src]="post.user.profile_picture" class="rounded-circle" width="42" height="42" [alt]="post.user.name">
+            </ng-container>
+            <ng-template #avatarNormal>
+              <div class="user-avatar rounded-circle d-flex align-items-center justify-content-center fw-bold">{{ post.user.name.charAt(0) }}</div>
+            </ng-template>
+            <div>
+              <h5 class="mb-0 fw-bold">{{ post.user.name }}</h5>
+              <small class="text-muted" *ngIf="post.restaurant"><i class="bi bi-geo-alt-fill me-1"></i>{{ post.restaurant.name }}</small>
+            </div>
+          </div>
+
+          <p class="mb-3" *ngIf="post.caption">{{ post.caption }}</p>
+          <hr class="content-divider">
+
+          <!-- Actions -->
+          <div class="d-flex justify-content-around py-3 border-top border-bottom">
+            <button class="btn action-btn d-flex align-items-center gap-2" (click)="toggleLike()" [class.text-orange]="post.is_liked">
+              <i class="bi fs-5" [ngClass]="{'bi-heart-fill': post.is_liked, 'bi-heart': !post.is_liked}"></i>
+              <span>{{ post.likes_count }}</span>
+            </button>
+            <button class="btn action-btn d-flex align-items-center gap-2">
+              <i class="bi bi-chat-dots fs-5"></i>
+              <span>{{ post.comments_count }}</span>
+            </button>
+            <button class="btn action-btn d-flex align-items-center gap-2">
+              <i class="bi bi-share fs-5"></i>
+              <span>Share</span>
+            </button>
+          </div>
+          <hr class="content-divider">
+
+          <h6 class="fw-semibold mb-3">Comments</h6>
+          <div class="text-muted small mb-4">No comments yet.</div>
+
+          <!-- Comment Input -->
+          <div class="input-group rounded-pill border border-orange">
+            <input [(ngModel)]="newComment" class="form-control border-0" placeholder="Add a comment..." (keydown.enter)="addComment()">
+            <button class="btn btn-orange rounded-pill px-4" (click)="addComment()" [disabled]="!newComment.trim()">
+              <i class="bi bi-send-fill"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

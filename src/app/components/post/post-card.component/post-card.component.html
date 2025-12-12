@@ -1,156 +1,142 @@
+<!-- -->
+<!-- your existing post card -->
+
+
 <!-- post-card.component.html -->
-<div class="card shadow-sm border-0 rounded-4 mb-4 overflow-hidden">
+<diV class="card shadow-sm rounded-4 mb-4 overflow-hidden border-1">
   <!-- HEADER -->
-  <div class="p-3 d-flex align-items-start justify-content-between">
-    <div class="d-flex align-items-center">
-      <img
-        [src]="post.user.profile_picture || 'assets/default-avatar.jpg'"
-        alt="{{ post.user.name }}"
-        class="rounded-circle me-3"
-        width="48"
-        height="48"
-        style="object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15);"
-      />
-      <div>
-        <h5 class="mb-0 fw-bold text-dark">{{ post.user.name }}</h5>
-        <div class="text-muted small">
-          <span *ngIf="post.restaurant?.id">
-            <a [routerLink]="['/restaurant', post.restaurant?.id]" class="text-orange fw-500 text-decoration-none hover-underline">
-              {{ post.restaurant?.name }}
-            </a>
-            <span class="mx-1">·</span>
-          </span>
-          {{ post.created_at_human }}
+  <div class="post-card" (click)="openDetail(post)">
+    <div class="p-3 d-flex align-items-start justify-content-between">
+      <div class="d-flex align-items-center">
+        <img [src]="post.user.profile_picture || 'assets/default-avatar.jpg'" alt="{{ post.user.name }}"
+          class="rounded-circle me-3" width="48" height="48"
+          style="object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15);" />
+        <div>
+          <h5 class="mb-0 fw-bold text-dark">{{ post.user.name }}</h5>
+          <div class="text-muted small">
+            <span *ngIf="post.restaurant?.id">
+              <a [routerLink]="['/restaurant', post.restaurant?.id]"
+                class="text-orange fw-500 text-decoration-none hover-underline">
+                {{ post.restaurant?.name }}
+              </a>
+              <span class="mx-1">·</span>
+            </span>
+            {{ post.created_at_human }}
+          </div>
         </div>
+      </div>
+
+      <!-- Three dots menu -->
+      <button class="btn btn-sm btn-light rounded-circle" type="button">
+        <i class="bi bi-three-dots"></i>
+      </button>
+    </div>
+
+    <!-- CAPTION & RATING -->
+    <div class="px-3 pb-2">
+      <p class="mb-2 text-dark" [innerHTML]="post.caption || ''"></p>
+
+      <div *ngIf="post.rating" class="d-flex align-items-center mb-3">
+        <span class="fs-3 text-warning">★★★★★</span>
+        <span class="fs-4 fw-bold text-orange ms-2">{{ post.rating }}</span>
+        <span class="text-muted ms-1">/ 5.0</span>
       </div>
     </div>
 
-    <!-- Three dots menu -->
-    <button class="btn btn-sm btn-light rounded-circle" type="button">
-      <i class="bi bi-three-dots"></i>
-    </button>
-  </div>
-
-  <!-- CAPTION & RATING -->
-  <div class="px-3 pb-2">
-    <p class="mb-2 text-dark" [innerHTML]="post.caption || ''"></p>
-
-    <div *ngIf="post.rating" class="d-flex align-items-center mb-3">
-      <span class="fs-3 text-warning">★★★★★</span>
-      <span class="fs-4 fw-bold text-orange ms-2">{{ post.rating }}</span>
-      <span class="text-muted ms-1">/ 5.0</span>
-    </div>
-  </div>
-
-  <!-- MEDIA GRID (Facebook Style) -->
-  <div *ngIf="post.media.length > 0" class="bg-black">
-    <!-- 1 Media -->
-    <ng-container *ngIf="post.media.length === 1">
-      <img
-        *ngIf="post.media[0].type === 'image'"
-        [src]="post.media[0].url"
-        class="w-100"
-        style="max-height: 600px; object-fit: contain;"
-        alt="post image"
-      />
-      <video
-        *ngIf="post.media[0].type === 'video'"
-        [src]="post.media[0].url"
-        controls
-        class="w-100"
-        style="max-height: 600px;"
-      ></video>
-    </ng-container>
-
-    <!-- 2 Media -->
-    <div *ngIf="post.media.length === 2" class="d-flex" style="height: 500px;">
-      <ng-container *ngFor="let item of post.media">
-        <div class="flex-fill position-relative overflow-hidden bg-black">
-          <img *ngIf="item.type === 'image'" [src]="item.url" class="w-100 h-100" style="object-fit: cover;" />
-          <video *ngIf="item.type === 'video'" [src]="item.url" muted class="w-100 h-100" style="object-fit: cover;"></video>
-          <div *ngIf="item.type === 'video'" class="position-absolute top-50 start-50 translate-middle">
-            <i class="bi bi-play-circle-fill text-white fs-1 opacity-75"></i>
-          </div>
-        </div>
+    <!-- MEDIA GRID (Facebook Style) -->
+    <div *ngIf="post.media.length > 0" class="bg-black">
+      <!-- 1 Media -->
+      <ng-container *ngIf="post.media.length === 1">
+        <img *ngIf="post.media[0].type === 'image'" [src]="post.media[0].url" class="w-100"
+          style="max-height: 600px; object-fit: contain;" alt="post image" />
+        <video *ngIf="post.media[0].type === 'video'" [src]="post.media[0].url" controls class="w-100"
+          style="max-height: 600px;"></video>
       </ng-container>
-    </div>
 
-    <!-- 3+ Media (Facebook 1 big + 2 small on right) -->
-    <div *ngIf="post.media.length >= 3" class="row g-0" style="max-height: 600px;">
-      <div class="col-6 position-relative overflow-hidden bg-black">
-        <img
-          *ngIf="post.media[0].type === 'image'"
-          [src]="post.media[0].url"
-          class="w-100 h-100"
-          style="object-fit: cover;"
-        />
-        <video *ngIf="post.media[0].type === 'video'" [src]="post.media[0].url" muted class="w-100 h-100" style="object-fit: cover;"></video>
-      </div>
-      <div class="col-6">
-        <div class="row g-0 h-50">
-          <div class="col-12 position-relative overflow-hidden bg-black" *ngFor="let item of post.media.slice(1,3); let i = index">
+      <!-- 2 Media -->
+      <div *ngIf="post.media.length === 2" class="d-flex" style="height: 500px;">
+        <ng-container *ngFor="let item of post.media">
+          <div class="flex-fill position-relative overflow-hidden bg-black">
             <img *ngIf="item.type === 'image'" [src]="item.url" class="w-100 h-100" style="object-fit: cover;" />
-            <video *ngIf="item.type === 'video'" [src]="item.url" muted class="w-100 h-100" style="object-fit: cover;"></video>
+            <video *ngIf="item.type === 'video'" [src]="item.url" muted class="w-100 h-100"
+              style="object-fit: cover;"></video>
             <div *ngIf="item.type === 'video'" class="position-absolute top-50 start-50 translate-middle">
-              <i class="bi bi-play-circle-fill text-white fs-3"></i>
+              <i class="bi bi-play-circle-fill text-white fs-1 opacity-75"></i>
             </div>
+          </div>
+        </ng-container>
+      </div>
 
-            <!-- +X overlay if more than 4 -->
-            <div
-              *ngIf="i === 1 && post.media.length > 4"
-              class="position-absolute inset-0 bg-black bg-opacity-60 d-flex align-items-center justify-content-center"
-            >
-              <span class="text-white fs-1 fw-bold">+{{ post.media.length - 3 }}</span>
+      <!-- 3+ Media (Facebook 1 big + 2 small on right) -->
+      <div *ngIf="post.media.length >= 3" class="row g-0" style="max-height: 600px;">
+        <div class="col-6 position-relative overflow-hidden bg-black">
+          <img *ngIf="post.media[0].type === 'image'" [src]="post.media[0].url" class="w-100 h-100"
+            style="object-fit: cover;" />
+          <video *ngIf="post.media[0].type === 'video'" [src]="post.media[0].url" muted class="w-100 h-100"
+            style="object-fit: cover;"></video>
+        </div>
+        <div class="col-6">
+          <div class="row g-0 h-50">
+            <div class="col-12 position-relative overflow-hidden bg-black"
+              *ngFor="let item of post.media.slice(1,3); let i = index">
+              <img *ngIf="item.type === 'image'" [src]="item.url" class="w-100 h-100" style="object-fit: cover;" />
+              <video *ngIf="item.type === 'video'" [src]="item.url" muted class="w-100 h-100"
+                style="object-fit: cover;"></video>
+              <div *ngIf="item.type === 'video'" class="position-absolute top-50 start-50 translate-middle">
+                <i class="bi bi-play-circle-fill text-white fs-3"></i>
+              </div>
+
+              <!-- +X overlay if more than 4 -->
+              <div *ngIf="i === 1 && post.media.length > 4"
+                class="position-absolute inset-0 bg-black bg-opacity-60 d-flex align-items-center justify-content-center">
+                <span class="text-white fs-1 fw-bold">+{{ post.media.length - 3 }}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- LIKES & COMMENTS COUNT -->
+    <div class="px-3 pt-3 d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <div class="text-orange d-flex align-items-center justify-content-center me-2"
+          style="width: 22px; height: 22px;">
+          <i class="bi bi-suit-heart-fill"></i>
+        </div>
+        <span class="text-muted small">{{ post.likes_count || 0 }}</span>
+      </div>
+      <span class="text-muted small">{{ post.comments_count || 0 }} comments</span>
+    </div>
+
   </div>
 
-  <!-- LIKES & COMMENTS COUNT -->
-  <div class="px-3 pt-3 d-flex justify-content-between align-items-center">
-    <div class="d-flex align-items-center">
-      <div class="text-orange d-flex align-items-center justify-content-center me-2" style="width: 22px; height: 22px;">
-        <i class="bi bi-suit-heart-fill"></i>
-      </div>
-      <span class="text-muted small">{{ post.likes_count || 0 }}</span>
-    </div>
-    <span class="text-muted small">{{ post.comments_count || 0 }} comments</span>
-  </div>
+
 
   <!-- ACTION BUTTONS -->
   <div class="border-top mt-2">
     <div class="row g-0">
       <div class="col">
-        <button
-          (click)="onLike(post)"
+        <button (click)="onLike(post)"
           class="btn btn-light w-100 py-3 rounded-0 d-flex align-items-center justify-content-center gap-2 fw-500"
-          [class.text-orange]="post.is_liked"
-          [class.bg-orange-light]="post.is_liked"
-        >
+          [class.text-orange]="post.is_liked" [class.bg-orange-light]="post.is_liked">
           <i class="bi {{ post.is_liked ? 'bi-heart-fill' : 'bi-heart' }} fs-5"></i>
           Like
         </button>
       </div>
       <div class="col">
-        <button
-          (click)="onComment($event)"
-          class="btn btn-light w-100 py-3 rounded-0 d-flex align-items-center justify-content-center gap-2 fw-500"
-        >
+        <button (click)="onComment(post)"
+          class="btn btn-light w-100 py-3 rounded-0 d-flex align-items-center justify-content-center gap-2 fw-500">
           <i class="bi bi-chat-dots fs-5"></i>
           Comment
         </button>
       </div>
       <div class="col">
-        <button
-          (click)="onShare()"
-          class="btn btn-light w-100 py-3 rounded-0 d-flex align-items-center justify-content-center gap-2 fw-500"
-        >
+        <button (click)="onShare()"
+          class="btn btn-light w-100 py-3 rounded-0 d-flex align-items-center justify-content-center gap-2 fw-500">
           <i class="bi bi-share fs-5"></i>
           Share
         </button>
       </div>
     </div>
   </div>
-</div>

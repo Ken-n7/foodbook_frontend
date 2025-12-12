@@ -1,0 +1,169 @@
+/* Core modal styling */
+.modal-content {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+/* Backdrop dim */
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 0 !important;
+  transition: background-color 0.3s ease;
+}
+
+/* Portrait modal on desktop (normal mode with media) */
+.modal-portrait {
+  max-width: 420px;
+  width: 100%;
+  margin: 1.75rem auto;
+}
+
+/* Wide modal when no media */
+.modal-xl {
+  max-width: 800px;
+}
+
+/* Media preview: preserve aspect ratio */
+.media-preview-container {
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+.media-preview-img {
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  display: block;
+  object-fit: contain;
+  background: #000;
+}
+
+/* Theater mode: stack on tablets/mobile */
+@media (max-width: 992px) {
+  .theater-mode-content {
+    flex-direction: column !important;
+  }
+
+  .theater-mode-content > div {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  .media-container {
+    height: 60vh;
+  }
+
+  .sidebar-content {
+    max-height: 40vh;
+  }
+}
+
+/* Fullscreen mobile feel */
+@media (max-width: 576px) {
+  .modal-portrait {
+    margin: 0;
+    height: 100%;
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  .normal-mode-content {
+    height: 100vh;
+  }
+
+  .media-preview-img {
+    max-height: 55vh;
+  }
+}
+
+/* Smooth open animation (one clean set) */
+.modal-dialog {
+  transition: transform 0.33s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.33s ease;
+  transform: translateY(-50px) scale(0.95);
+  opacity: 0;
+}
+
+.modal.show .modal-dialog {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Mode switch fade */
+.theater-mode-content,
+.normal-mode-content {
+  transition: opacity 0.3s ease;
+}
+
+/* Action buttons */
+.action-btn {
+  color: #65676b;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.1s ease;
+}
+
+.action-btn:hover {
+  color: #ff7a00 !important;
+  background-color: rgba(255, 122, 0, 0.08);
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+}
+
+.text-orange { color: #ff7a00 !important; }
+
+/* Theme accents */
+.border-orange { border-color: #ff7a00 !important; }
+
+.btn-orange {
+  background-color: #ff7a00;
+  color: white;
+  transition: background-color 0.5s ease;
+}
+
+.btn-orange:hover { background-color: #e66d00; }
+.btn-orange:disabled { background-color: #ffb84d; opacity: 0.7; }
+
+/* Avatar */
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  background-color: #ff7a00;
+  color: white;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dividers & scrollbar */
+.content-divider {
+  border-bottom: 1px solid #e4e6eb;
+  margin: 1rem 0;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 122, 0, 0.4);
+  border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 122, 0, 0.6);
+}
+
+/* Accessibility */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #ff7a00;
+  outline-offset: 2px;
+}
+
+.zoom-hint {
+  transition: opacity 0.2s ease;
+  font-size: 0.9rem;
+}

@@ -1,8 +1,10 @@
 import { RouterLink } from '@angular/router';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ComponentRef, ViewContainerRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '../../../interfaces/post.interface';
 import { PostService } from '../../../services/post.service';
+import { PostDetailModalComponent } from '../../post/post-detail-modal.component/post-detail-modal.component'; // ← Add import
+
 
 @Component({
   selector: 'app-post-card',
@@ -16,7 +18,12 @@ export class PostCardComponent {
   @Output() like = new EventEmitter<Post>();
   @Output() comment = new EventEmitter<Post>();
 
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService,
+    private cdr: ChangeDetectorRef,
+    private viewContainerRef: ViewContainerRef
+  ) {}
+  private modalRef?: ComponentRef<PostDetailModalComponent>;
 
   onLike(post: Post): void {
     const wasLiked = post.is_liked;
@@ -40,9 +47,13 @@ export class PostCardComponent {
     });
   }
 
-  onComment(event: Event): void {
-    event.stopPropagation();
-    this.comment.emit(this.post);
+  // onComment(event: Event): void {
+  //   event.stopPropagation();
+  //   this.comment.emit(this.post);
+  // }
+
+    onComment(post: Post): void {
+    this.openDetail(post); // Reuse the detail modal for comments too
   }
 
   onShare(): void {
@@ -57,6 +68,26 @@ export class PostCardComponent {
     } else {
       this.fallbackCopy();
     }
+  }
+
+  // FIXED: Properly open the modal
+  openDetail(post: Post) {
+    // Clear any existing modal
+    if (this.modalRef) {
+      this.modalRef.instance.close.emit();
+    }
+
+    // Create the modal component dynamically
+    this.modalRef = this.viewContainerRef.createComponent(PostDetailModalComponent);
+
+    // Pass the post data
+    this.modalRef.instance.post = post;
+
+    // Listen to close event and destroy
+    this.modalRef.instance.close.subscribe(() => {
+      this.modalRef?.destroy();
+      this.modalRef = undefined;
+    });
   }
 
   private fallbackCopy(): void {

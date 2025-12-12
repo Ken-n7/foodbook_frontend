@@ -1,32 +1,40 @@
-<div class="min-h-screen bg-gray-50 py-4">
-  <div class="max-w-2xl mx-auto space-y-6">
+<!-- feed.component.html -->
+<div class="min-h-screen bg-gray-100">
+  <div class="max-w-2xl mx-auto py-6 px-4 space-y-8">
 
+    <!-- Posts -->
     @for (post of posts; track post.id) {
       <app-post-card
         [post]="post"
-        (like)="onLike(post)"
-        (comment)="onComment(post)"
-      />
+        (like)="onLike(post)">
+      </app-post-card>
     }
 
+    <!-- Loading Spinner -->
     @if (isLoading) {
-      <div class="flex justify-center py-8">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-indigo-600"></div>
+      <div class="flex justify-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-orange-600"></div>
       </div>
     }
 
+    <!-- Load More Button -->
     @if (!isLoading && currentPage < lastPage) {
-      <button
-        (click)="onScroll()"
-        class="w-full py-4 text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition"
-      >
-        Load more posts
-      </button>
+      <div class="text-center">
+        <button (click)="onScroll()"
+                class="inline-flex items-center px-8 py-4 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition shadow-lg">
+          <span>Load more posts</span>
+          <i class="bi bi-arrow-down-short ml-2 text-xl"></i>
+        </button>
+      </div>
     }
 
+    <!-- Empty State -->
     @if (!isLoading && posts.length === 0) {
-      <p class="text-center text-gray-500 py-20">No posts yet. Be the first to share!</p>
+      <div class="text-center py-20">
+        <div class="bg-gray-200 border-2 border-dashed rounded-xl w-32 h-32 mx-auto mb-6"></div>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">No posts yet</h3>
+        <p class="text-gray-500">Be the first to share your food experience!</p>
+      </div>
     }
-
   </div>
 </div>

@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewContainerRef, ComponentRef } from '@angular/core';
 import { PostService } from '../../../services/post.service';
 import { Post, PaginatedResponse } from '../../../interfaces/post.interface';
 import { CommonModule } from '@angular/common';
 import { PostCardComponent } from '../../post/post-card.component/post-card.component';
-import { Observable } from 'rxjs';
+import { PostDetailModalComponent } from '../../post/post-detail-modal.component/post-detail-modal.component'; // ← Add import
 
 @Component({
   selector: 'app-feed',
@@ -20,7 +20,7 @@ export class FeedComponent implements OnInit {
 
   constructor(
     private postService: PostService,
-    private cdr: ChangeDetectorRef // ← Inject it
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -32,7 +32,6 @@ export class FeedComponent implements OnInit {
     if (this.isLoading) return;
     this.isLoading = true;
 
-    console.log('Fetching posts page', page);
     this.postService.getPosts(page).subscribe({
       next: (response: PaginatedResponse<Post>) => {
         if (page === 1) {
@@ -44,46 +43,31 @@ export class FeedComponent implements OnInit {
         this.currentPage = response.current_page;
         this.lastPage = response.last_page;
         this.isLoading = false;
-
-        this.cdr.detectChanges();  // ← Force immediate render
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to load posts', err);
         alert('Could not load feed. Please try again.');
         this.isLoading = false;
-        this.cdr.detectChanges();
       },
     });
   }
 
   onLike(post: Post): void {
     const wasLiked = post.is_liked;
-
-    // Optimistic update
     post.is_liked = !wasLiked;
     post.likes_count += wasLiked ? -1 : 1;
 
     this.postService.toggleLike(post).subscribe({
-      next: () => {
-        // Success — already updated optimistically
-      },
-      error: (err) => {
-        // Revert on failure
+      next: () => { /* optimistic success */ },
+      error: () => {
         post.is_liked = wasLiked;
         post.likes_count += wasLiked ? 1 : -1;
-        console.error('Like failed', err);
-        alert('Could not update like. Try again.');
+        alert('Like failed. Try again.');
       },
     });
   }
 
-  onComment(post: Post): void {
-    // For now just open comment modal or scroll to comments
-    alert(`Open comments for post #${post.id}`);
-    // Later: this.commentModal.open(post);
-  }
-
-  // Infinite scroll helper
   onScroll(): void {
     if (this.currentPage < this.lastPage && !this.isLoading) {
       this.loadPosts(this.currentPage + 1);
