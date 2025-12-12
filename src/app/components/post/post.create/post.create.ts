@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -12,6 +12,7 @@ import { RestaurantService, Restaurant } from '../../../services/restaurant.serv
 import { PostService } from '../../../services/post.service';
 import { Observable, Subject, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-create-post',
@@ -20,7 +21,8 @@ import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
 })
-export class CreatePostComponent implements OnInit {
+export class CreatePostComponent implements OnInit, AfterViewInit{
+  createPostModal: any;
   form!: FormGroup;
 
   // Observable list of restaurants for autocomplete
@@ -31,11 +33,23 @@ export class CreatePostComponent implements OnInit {
   mediaPreviews: string[] = [];
   mediaFiles: File[] = [];
 
+  @ViewChild('postTextarea') postTextarea!: ElementRef<HTMLTextAreaElement>; // ← Fixed type
+
   constructor(
     private fb: FormBuilder,
     private restaurantService: RestaurantService,
     private postService: PostService
   ) {}
+
+  focusTextarea(): void {
+    this.postTextarea?.nativeElement.focus();
+  }
+
+  clearRestaurant(): void {
+    this.restaurantId.setValue('');
+    this.restaurantSearchControl.setValue('');
+    this.searchTerms.next(''); // Hide dropdown if open
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -82,6 +96,15 @@ export class CreatePostComponent implements OnInit {
     return this.form.get('restaurant_search') as FormControl;
   }
 
+  ngAfterViewInit() {
+    const modalElement = document.getElementById('createPostModal');
+    this.createPostModal = new bootstrap.Modal(modalElement);
+  }
+
+  openCreatePostModal() {
+    this.createPostModal.show();
+  }
+
   // Emit search terms as user types
   onSearchTermChange(term: string): void {
     this.searchTerms.next(term);
@@ -91,6 +114,12 @@ export class CreatePostComponent implements OnInit {
   selectRestaurant(restaurant: Restaurant): void {
     this.restaurantId.setValue(restaurant.id);
     this.restaurantSearchControl.setValue(restaurant.name, { emitEvent: false });
+
+    // Hide dropdown instantly
+    this.searchTerms.next('');
+
+    // Focus the main textarea after tagging
+    setTimeout(() => this.focusTextarea(), 100);
   }
 
   private validateContentOrMedia(): void {
@@ -151,10 +180,12 @@ export class CreatePostComponent implements OnInit {
       return;
     }
 
+    // console.log(this.restaurantId.value);
     const formData = new FormData();
-    formData.append('content', this.content.value || '');
+    formData.append('caption', this.content.value || '');
     formData.append('restaurant_id', this.restaurantId.value || '');
     formData.append('rating', (this.rating.value ?? 0).toString());
+    console.log(this.rating.value);
 
     this.mediaFiles.forEach((file) => formData.append('media[]', file));
 

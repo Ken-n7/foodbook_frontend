@@ -1,49 +1,33 @@
-import { HttpRequest, HttpHandlerFn, HttpEvent, HttpEventType, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
-import { Router } from '@angular/router';
+// token.interceptor.ts
+import {
+  HttpEvent,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
-export function tokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
-  const token = localStorage.getItem('token');
-  const router = inject(Router);  // inject Router to navigate
+export const tokenInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> => {
+  const authService = inject(AuthService);
+  const token = authService.getToken();
 
-  let clonedReq = req;
-  if (token) {
-    clonedReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-  }
+  const authReq = token
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req;
 
-  return next(clonedReq).pipe(
-    tap(event => {
-      if (event.type === HttpEventType.Response) {
-        console.log('Response received for', req.url);
-      }
-    }),
-    catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
-        // Token expired or unauthorized access
-        console.warn('Unauthorized - token might be expired');
-
-        // Remove invalid token from storage
-        localStorage.removeItem('token');
-
-        // Redirect to login page (adjust route as needed)
-        router.navigate(['/login']);
-
-        // Optionally: show a toast or alert here
-        alert('Session expired. Please log in again.');
-
-        // Optionally: you could return EMPTY here if you want to swallow the error:
-        // return EMPTY;
-
-        // Or rethrow the error to propagate it further:
-        return throwError(() => error);
+  return next(authReq).pipe(
+    catchError((error: unknown) => {
+      if (error instanceof HttpErrorResponse && error.status === 401 && authService.isLoggedIn()) {
+        authService.logout(); // clears token + navigates
       }
       return throwError(() => error);
     })
   );
-}
+};

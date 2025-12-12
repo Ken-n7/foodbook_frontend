@@ -1,20 +1,50 @@
-<!-- <app-header></app-header> -->
-<app-create-post></app-create-post>
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
 
-<div class="container py-3">
+    <!-- Left Sidebar (Hidden on small screens) -->
+    <div class="col-lg-3 d-none d-lg-block bg-black">
+      <div class="sidebar">
+        <div class="placeholder mb-4">
+          <h5 class="text-muted">Left Sidebar</h5>
+          <p class="text-muted small">Future component: Trends, Topics, etc.</p>
+        </div>
+        <div class="placeholder">
+          <h5 class="text-muted">Suggestions</h5>
+          <p class="text-muted small">Who to follow, etc.</p>
+        </div>
+      </div>
+    </div>
 
-  <h2>Restaurants</h2>
+    <!-- Main Feed Area (Centered) -->
+    <div class="col-12 col-md-8 col-lg-6">
+      <div class="feed-container mx-auto">
 
-  <div *ngIf="loading">Loading...</div>
+        <!-- Create Post Component -->
+        <div class="mb-4">
+          <app-create-post></app-create-post>
+        </div>
 
-  <div *ngIf="!loading && restaurants.length === 0">
-    No restaurants found.
+        <!-- Feed Component -->
+        <div>
+          <app-feed></app-feed>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right Sidebar (Hidden on medium and smaller screens) -->
+    <div class="col-lg-3 d-none d-lg-block bg-black">
+      <div class="sidebar">
+        <div class="placeholder mb-4">
+          <h5 class="text-muted">Right Sidebar</h5>
+          <p class="text-muted small">Future component: Ads, News, Calendar, etc.</p>
+        </div>
+        <div class="placeholder">
+          <h5 class="text-muted">Quick Actions</h5>
+          <p class="text-muted small">Messages, Notifications, etc.</p>
+        </div>
+      </div>
+    </div>
+
   </div>
-
-  <ul *ngIf="!loading && restaurants.length > 0">
-    <li *ngFor="let r of restaurants">
-      {{ r.name }} — ({{ r.latitude }}, {{ r.longitude }})
-    </li>
-  </ul>
-
 </div>

@@ -1,8 +1,18 @@
-import { Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+// src/app/components/auth/register/register.component.ts
+import { Component, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators, FormControl, FormGroup } from '@angular/forms';
 import { AuthService } from '../../../auth/auth.service';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs/operators';
+
+interface RegisterForm {
+  name: FormControl<string>;
+  email: FormControl<string>;
+  password: FormControl<string>;
+  password_confirmation: FormControl<string>;
+}
 
 @Component({
   selector: 'app-register',
@@ -12,33 +22,60 @@ import { Router } from '@angular/router';
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
-  loading = false;
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
+  form: FormGroup<RegisterForm>;
 
-  form: ReturnType<FormBuilder['group']>;
-
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {
-    this.form = this.fb.group({
-      name: ['', [Validators.required]],
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly auth: AuthService,
+    private readonly router: Router
+  ) {
+    this.form = this.fb.nonNullable.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required]],
+      password_confirmation: ['', [Validators.required]],
     });
+
+    // Auto-clear error when user starts typing
+    this.form.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.error.set(null));
   }
 
   submit() {
     if (this.form.invalid) return;
 
-    this.loading = true;
+    this.loading.set(true);
+    this.error.set(null);
 
-    this.auth.register(this.form.value).subscribe({
-      next: () => {
-        this.loading = false;
-        alert('Registration successful!');
-        this.router.navigate(['/home']);
-      },
-      error: () => {
-        this.loading = false;
-        alert('Something went wrong');
-      }
-    });
+    const { name, email, password, password_confirmation } = this.form.getRawValue();
+
+    this.auth
+      .register({ name, email, password, password_confirmation })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: () => {
+          this.closeModalIfExists();
+          // Optional: auto-login after register or just go home
+          this.router.navigate(['/home']);
+        },
+        error: (err: any) => {
+          const msg = err?.error?.message || err?.message || 'Registration failed';
+          this.error.set(msg);
+        },
+      });
+  }
+
+  private closeModalIfExists() {
+    const modalEl = document.getElementById('signupModal');
+    if (!modalEl) return;
+
+    const bs = (window as any).bootstrap?.Modal;
+    if (bs) {
+      const instance = bs.getInstance(modalEl) ?? new bs(modalEl);
+      instance.hide();
+    }
   }
 }

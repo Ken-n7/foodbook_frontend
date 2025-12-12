@@ -49,7 +49,7 @@
 
 /* Input Field Styling */
 .custom-input {
-  background-color: #e0e0e0; /* Gray background */
+  /* background-color: #e0e0e0; Gray background */
   border: 1px solid #ccc; /* Subtle border */
   border-radius: 10px; /* Rounded corners for inputs */
   padding: 12px 15px; /* Height and padding */
@@ -57,7 +57,7 @@
 }
 
 .custom-input:focus {
-  background-color: #e0e0e0; /* Keep gray on focus */
+  /* background-color: #e0e0e0; Keep gray on focus */
   box-shadow: none; /* Remove default Bootstrap shadow */
   border-color: #aaa;
 }

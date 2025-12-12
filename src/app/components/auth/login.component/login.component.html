@@ -1,31 +1,65 @@
-<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered custom-modal-dialog">
     <div class="modal-content custom-modal-content">
       <div class="modal-body p-4">
 
-        <form (ngSubmit)="submit()" [formGroup]="form">
+        <form (ngSubmit)="submit()" [formGroup]="form" novalidate>
+
+          <!-- Error message -->
+          <div *ngIf="error()" class="alert alert-danger mb-3" role="alert">
+            {{ error() }}
+          </div>
 
           <div class="mb-3">
             <label for="loginEmail" class="form-label custom-label">Email Address</label>
-            <input type="email" formControlName="email" class="form-control custom-input" />
+            <input
+              type="email"
+              id="loginEmail"
+              formControlName="email"
+              class="form-control custom-input"
+              [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid"
+              placeholder="you@example.com"
+            />
+            <div class="invalid-feedback">
+              Please enter a valid email.
+            </div>
           </div>
 
           <div class="mb-3">
             <label for="loginPassword" class="form-label custom-label">Password</label>
-            <input type="password" formControlName="password" class="form-control custom-input" />
+            <input
+              type="password"
+              id="loginPassword"
+              formControlName="password"
+              class="form-control custom-input"
+              [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
+              placeholder="••••••••"
+            />
+            <div class="invalid-feedback">
+              Password is required.
+            </div>
           </div>
 
-          <button type="submit" [disabled]="loading || form.invalid" class="btn btn-primary w-100 mb-3 action-btn">
-            {{ loading ? 'Logging in…' : 'Login' }}
+          <button
+            type="submit"
+            [disabled]="loading() || form.invalid"
+            class="btn btn-primary w-100 mb-3 action-btn"
+          >
+            <span *ngIf="loading()" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ loading() ? 'Logging in…' : 'Login' }}
           </button>
 
           <div class="text-center mb-3 divider-text">or</div>
 
-          <button type="button" class="btn google-btn w-100">
+          <button type="button" class="btn google-btn w-100" disabled>
             <span>Sign in with Google</span>
-            <!-- <img src="assets/google-g-logo" alt="Google" class="google-icon">   -->
+            <!-- <img src="assets/google-g-logo.svg" alt="Google" class="google-icon"> -->
           </button>
 
+          <!-- Optional links -->
+          <div class="text-center mt-3">
+            <a routerLink="/forgot-password" class="small text-muted">Forgot password?</a>
+          </div>
         </form>
 
       </div>

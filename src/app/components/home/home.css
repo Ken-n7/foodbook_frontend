@@ -1,0 +1,14 @@
+/* Optional: Add some spacing and max width for the main feed */
+    .feed-container {
+      max-width: 680px;
+    }
+    .sidebar {
+      position: sticky;
+      top: 1rem;
+    }
+    .placeholder {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      min-height: 300px;
+    }

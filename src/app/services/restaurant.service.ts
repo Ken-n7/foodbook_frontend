@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 
 export interface Restaurant {
   id: string;
@@ -17,14 +18,28 @@ export class RestaurantService {
 
   constructor(private http: HttpClient) {}
 
-  // Get all restaurants (be careful if the list is large)
   getAll(): Observable<Restaurant[]> {
     return this.http.get<Restaurant[]>(this.api);
   }
 
-  // Search restaurants by name or query term
+  // Fixed version
   searchRestaurants(term: string): Observable<Restaurant[]> {
+    if (!term.trim()) {
+      return of([]); // Return empty array if no search term
+    }
+
     const url = `${this.api}/search?q=${encodeURIComponent(term)}`;
-    return this.http.get<Restaurant[]>(url);
+
+    return this.http.get<any>(url).pipe(
+      tap(response => console.log('Raw API response:', response)),// ← Add this
+      map((response) => {
+        // Adjust this line based on your actual API response structure
+        return response.data || response.results || response || [];
+      }),
+      catchError((error) => {
+        console.error('Error searching restaurants:', error);
+        return of([]); // Return empty array on error
+      })
+    );
   }
 }
