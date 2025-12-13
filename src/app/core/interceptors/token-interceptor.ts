@@ -9,7 +9,7 @@ import {
 import { inject } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AuthService } from './auth.service';
+import { AuthService } from '../../auth/auth.service';
 
 export const tokenInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -18,13 +18,12 @@ export const tokenInterceptor: HttpInterceptorFn = (
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  const authReq = token
-    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-    : req;
+  const authReq = token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
 
   return next(authReq).pipe(
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse && error.status === 401 && authService.isLoggedIn()) {
+        console.warn('Unauthorized, logging out...');
         authService.logout(); // clears token + navigates
       }
       return throwError(() => error);

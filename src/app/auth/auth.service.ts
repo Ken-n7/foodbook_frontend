@@ -90,7 +90,7 @@ export class AuthService {
 
     // 3. Navigate only if requested
     if (navigate) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/welcome']);
     }
   }
 

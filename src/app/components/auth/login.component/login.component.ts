@@ -55,7 +55,7 @@ export class LoginComponent {
       .subscribe({
         next: () => {
           this.closeModalIfExists();
-          this.router.navigate(['/home']);
+          this.router.navigate(['/']);
         },
         error: (err: any) => {
           this.error.set(

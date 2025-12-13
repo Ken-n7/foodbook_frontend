@@ -1,13 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CreatePostComponent } from '../post/post.create/post.create';
-import { RestaurantService } from '../../services/restaurant.service';
-import { FeedComponent } from '../feed/feed.component/feed.component';
+import { CreatePostComponent } from '../../post/post.create/post.create';
+import { RestaurantService } from '../../../services/restaurant.service';
+import { FeedComponent } from '../../feed/feed.component/feed.component';
+import { SidebarComponent } from '../../shared/sidebar.component/sidebar.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, CreatePostComponent, FeedComponent],
+  imports: [CommonModule, CreatePostComponent, FeedComponent, SidebarComponent],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

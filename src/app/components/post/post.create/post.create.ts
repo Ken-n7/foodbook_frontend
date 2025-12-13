@@ -1,13 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild, ElementRef, } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  FormControl,
-  AbstractControl,
-} from '@angular/forms';
+import { AfterViewInit, Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { RestaurantService, Restaurant } from '../../../services/restaurant.service';
 import { PostService } from '../../../services/post.service';
 import { Observable, Subject, of } from 'rxjs';
@@ -21,7 +14,7 @@ declare var bootstrap: any;
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
 })
-export class CreatePostComponent implements OnInit, AfterViewInit{
+export class CreatePostComponent implements OnInit, AfterViewInit {
   createPostModal: any;
   form!: FormGroup;
 

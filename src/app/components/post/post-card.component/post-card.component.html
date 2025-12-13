@@ -1,48 +1,60 @@
-<!-- -->
-<!-- your existing post card -->
+<div class="card shadow-sm rounded-4 mb-4 overflow-hidden border-1">
 
-
-<!-- post-card.component.html -->
-<diV class="card shadow-sm rounded-4 mb-4 overflow-hidden border-1">
   <!-- HEADER -->
-  <div class="post-card" (click)="openDetail(post)">
-    <div class="p-3 d-flex align-items-start justify-content-between">
-      <div class="d-flex align-items-center">
-        <img [src]="post.user.profile_picture || 'assets/default-avatar.jpg'" alt="{{ post.user.name }}"
-          class="rounded-circle me-3" width="48" height="48"
-          style="object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15);" />
-        <div>
-          <h5 class="mb-0 fw-bold text-dark">{{ post.user.name }}</h5>
-          <div class="text-muted small">
-            <span *ngIf="post.restaurant?.id">
-              <a [routerLink]="['/restaurant', post.restaurant?.id]"
-                class="text-orange fw-500 text-decoration-none hover-underline">
-                {{ post.restaurant?.name }}
-              </a>
-              <span class="mx-1">·</span>
-            </span>
-            {{ post.created_at_human }}
+  <div class="post-card" (click)="openDetail(post)" style="cursor: pointer;">
+    <div (click)="$event.stopPropagation()">
+      <div class="p-3 d-flex align-items-start justify-content-between">
+        <div class="d-flex align-items-center">
+          <img [src]="post.user.profile_picture || 'assets/default-avatar.jpg'" alt="{{ post.user.name }}"
+            class="rounded-circle me-3 img-fluid" width="48" height="48"
+            style="object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15);" />
+          <div>
+            <h5 class="mb-0 fw-bold text-dark">{{ post.user.name }}</h5>
+            <div class="text-muted small">
+              <span *ngIf="post.restaurant?.id">
+                <a [routerLink]="['/restaurant', post.restaurant?.id]"
+                  class="text-orange fw-500 text-decoration-none hover-underline">
+                  {{ post.restaurant?.name }}
+                </a>
+                <span class="mx-1">·</span>
+              </span>
+              {{ post.created_at_human }}
+            </div>
           </div>
+        </div>
+
+        <!-- Three dots menu -->
+        <div class="dropdown" (click)="$event.stopPropagation()">
+          <button class="btn btn-sm btn-light rounded-circle" type="button" id="dropdownMenuButton"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+            <!-- Show edit/delete only if owner -->
+            <li *ngIf="currentUserId === post.user_id">
+              <button class="dropdown-item" (click)="editPost(post)">Edit</button>
+            </li>
+            <li *ngIf="currentUserId === post.user_id">
+              <button class="dropdown-item text-danger" (click)="deletePost(post)">Delete</button>
+            </li>
+            <li>
+              <button class="dropdown-item" (click)="reportPost(post)">Report</button>
+            </li>
+          </ul>
         </div>
       </div>
 
-      <!-- Three dots menu -->
-      <button class="btn btn-sm btn-light rounded-circle" type="button">
-        <i class="bi bi-three-dots"></i>
-      </button>
-    </div>
+      <!-- CAPTION & RATING -->
+      <div class="px-3 pb-2">
+        <p class="mb-2 text-dark" [innerHTML]="post.caption || ''"></p>
 
-    <!-- CAPTION & RATING -->
-    <div class="px-3 pb-2">
-      <p class="mb-2 text-dark" [innerHTML]="post.caption || ''"></p>
-
-      <div *ngIf="post.rating" class="d-flex align-items-center mb-3">
-        <span class="fs-3 text-warning">★★★★★</span>
-        <span class="fs-4 fw-bold text-orange ms-2">{{ post.rating }}</span>
-        <span class="text-muted ms-1">/ 5.0</span>
+        <div *ngIf="post.rating" class="d-flex align-items-center mb-3">
+          <span class="fs-3 text-warning">★★★★★</span>
+          <span class="fs-4 fw-bold text-orange ms-2">{{ post.rating }}</span>
+          <span class="text-muted ms-1">/ 5.0</span>
+        </div>
       </div>
     </div>
-
     <!-- MEDIA GRID (Facebook Style) -->
     <div *ngIf="post.media.length > 0" class="bg-black">
       <!-- 1 Media -->
@@ -111,8 +123,6 @@
 
   </div>
 
-
-
   <!-- ACTION BUTTONS -->
   <div class="border-top mt-2">
     <div class="row g-0">
@@ -140,3 +150,5 @@
       </div>
     </div>
   </div>
+
+</div>

@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { Logo } from '../logo/logo';
 import { SearchBar } from '../search-bar/search-bar';
 import { AuthService } from '../../../auth/auth.service';
+import { ProfilePicture } from '../profile-picture/profile-picture';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, Logo, SearchBar],
+  imports: [CommonModule, RouterModule, Logo, SearchBar, ProfilePicture],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })

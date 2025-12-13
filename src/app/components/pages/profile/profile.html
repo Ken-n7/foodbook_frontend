@@ -1,0 +1,195 @@
+<div class="profile-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-orange" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="!isLoading && user">
+    <!-- Cover Photo Section -->
+    <div class="cover-photo-section">
+      <div class="cover-photo bg-gradient-orange position-relative">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=400&fit=crop" alt="Cover"
+          class="w-100 h-100" style="object-fit: cover;">
+        <button *ngIf="isOwnProfile" (click)="uploadCover()" class="btn btn-light position-absolute bottom-0 end-0 m-3">
+          <i class="bi bi-camera-fill me-2"></i>
+          Edit Cover Photo
+        </button>
+      </div>
+
+      <!-- Profile Info Container -->
+      <div class="container">
+        <div class="profile-header-content">
+          <div class="d-flex flex-column flex-md-row align-items-center align-items-md-end gap-3">
+            <!-- Profile Picture -->
+            <div class="profile-picture-wrapper position-relative">
+              <img [src]="user.profile_picture" [alt]="user.name" class="profile-picture">
+              <button *ngIf="isOwnProfile" (click)="uploadProfilePicture()"
+                class="btn btn-light btn-sm position-absolute bottom-0 end-0 rounded-circle p-2">
+                <i class="bi bi-camera-fill"></i>
+              </button>
+            </div>
+
+            <!-- User Info -->
+            <div class="flex-grow-1 text-center text-md-start">
+              <h1 class="mb-1 fw-bold">{{ user.name }}</h1>
+              <p class="text-muted mb-2">{{ user.bio }}</p>
+              <div class="d-flex gap-3 justify-content-center justify-content-md-start">
+                <span class="text-muted">
+                  <strong class="text-dark">{{ user.posts_count || 0 }}</strong> posts
+                </span>
+                <span class="text-muted">
+                  <strong class="text-dark">{{ user.followers_count || 0 }}</strong> followers
+                </span>
+                <span class="text-muted">
+                  <strong class="text-dark">{{ user.following_count || 0 }}</strong> following
+                </span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2 mt-3 mt-md-0">
+              <button *ngIf="isOwnProfile" (click)="editProfile()" class="btn btn-orange">
+                <i class="bi bi-pencil-fill me-2"></i>
+                Edit Profile
+              </button>
+              <button *ngIf="!isOwnProfile" (click)="toggleFollow()" [class.btn-orange]="!isFollowing"
+                [class.btn-outline-orange]="isFollowing" class="btn">
+                <i [class]="isFollowing ? 'bi bi-person-check-fill' : 'bi bi-person-plus-fill'" class="me-2"></i>
+                {{ isFollowing ? 'Following' : 'Follow' }}
+              </button>
+              <button class="btn btn-outline-secondary">
+                <i class="bi bi-three-dots"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabs Navigation -->
+          <div class="profile-tabs mt-4">
+            <ul class="nav nav-tabs border-0">
+              <li class="nav-item">
+                <button class="nav-link" [class.active]="activeTab === 'posts'" (click)="setActiveTab('posts')">
+                  <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+                  Posts
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" [class.active]="activeTab === 'about'" (click)="setActiveTab('about')">
+                  <i class="bi bi-info-circle-fill me-2"></i>
+                  About
+                </button>
+              </li>
+              <!-- <li class="nav-item">
+                <button
+                  class="nav-link"
+                  [class.active]="activeTab === 'photos'"
+                  (click)="setActiveTab('photos')">
+                  <i class="bi bi-images me-2"></i>
+                  Photos
+                </button>
+              </li> -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="container mt-4">
+      <div class="row">
+        <!-- Left Sidebar - User Info -->
+        <div class="col-lg-4 mb-4">
+          <div class="card shadow-sm rounded-4 p-4">
+            <h5 class="fw-bold mb-3">
+              <i class="bi bi-info-circle-fill text-orange me-2"></i>
+              About
+            </h5>
+            <div class="mb-3">
+              <p class="text-muted mb-1">
+                <i class="bi bi-calendar-event me-2"></i>
+                Joined {{ user.created_at_human }}
+              </p>
+            </div>
+            <div *ngIf="user.bio" class="mb-3">
+              <p class="mb-0">{{ user.bio }}</p>
+            </div>
+          </div>
+
+          <!-- Stats Card -->
+          <div class="card shadow-sm rounded-4 p-4 mt-3">
+            <h5 class="fw-bold mb-3">
+              <i class="bi bi-bar-chart-fill text-orange me-2"></i>
+              Activity
+            </h5>
+            <div class="d-flex flex-column gap-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted">Total Posts</span>
+                <span class="badge bg-orange rounded-pill">{{ user.posts_count || 0 }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted">Followers</span>
+                <span class="badge bg-orange rounded-pill">{{ user.followers_count || 0 }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted">Following</span>
+                <span class="badge bg-orange rounded-pill">{{ user.following_count || 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-8">
+          <!-- Posts Tab -->
+          <div *ngIf="activeTab === 'posts'">
+            <div *ngIf="posts.length === 0" class="text-center py-5">
+              <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
+              <p class="text-muted mt-3">No posts yet</p>
+            </div>
+            <app-post-card *ngFor="let post of posts" [post]="post" [currentUserId]="currentUserId"
+              (deleted)="onPostDeleted($event)">
+
+            </app-post-card>
+          </div>
+
+          <!-- About Tab -->
+          <div *ngIf="activeTab === 'about'" class="card shadow-sm rounded-4 p-4">
+            <h5 class="fw-bold mb-3">About {{ user.name }}</h5>
+            <div class="mb-3">
+              <h6 class="text-muted mb-2">Bio</h6>
+              <p>{{ user.bio || 'No bio available' }}</p>
+            </div>
+            <div class="mb-3">
+              <h6 class="text-muted mb-2">Member Since</h6>
+              <p>{{ user.created_at_human }}</p>
+            </div>
+          </div>
+
+          <!-- Photos Tab -->
+          <!-- <div *ngIf="activeTab === 'photos'">
+            <div class="card shadow-sm rounded-4 p-4">
+              <h5 class="fw-bold mb-3">Photos</h5>
+              <div class="row g-2">
+                <div *ngFor="let post of posts" class="col-6 col-md-4">
+                  <div *ngFor="let media of post.media" class="position-relative photo-item">
+                    <img *ngIf="media.type === 'image'"
+                         [src]="media.url"
+                         alt="Photo"
+                         class="w-100 rounded"
+                         style="aspect-ratio: 1; object-fit: cover; cursor: pointer;">
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="posts.length === 0" class="text-center py-5">
+                <i class="bi bi-images text-muted" style="font-size: 4rem;"></i>
+                <p class="text-muted mt-3">No photos yet</p>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

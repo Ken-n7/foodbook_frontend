@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Post, PaginatedResponse } from '../interfaces/post.interface';
+import { Post } from '../interfaces/post.interface';
+import { PaginatedResponse } from '../interfaces/paginated-response.interface';
+import { map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PostService {
-  private readonly api = 'http://localhost:8080/api/posts';
+  private api = 'http://localhost:8080/api/posts';
 
   constructor(private http: HttpClient) {}
 
@@ -21,9 +23,18 @@ export class PostService {
     return this.http.get<Post>(`${this.api}/${id}`);
   }
 
-  // post.service.ts
+  deletePost(postId: number): Observable<void> {
+    return this.http.delete<void>(`${this.api}/${postId}`);
+  }
+
+
+  getUserPosts(userId: number) {
+    return this.http.get<{ data: Post[] }>(`http://localhost:8080/api/users/${userId}/posts`).pipe(
+      map((response) => response.data) // <-- Extract array here
+    );
+  }
+
   toggleLike(post: Post): Observable<any> {
-    console.log('Toggling like for post', post.id, 'currently:', post.is_liked);
     return this.http.post(`${this.api}/${post.id}/toggle-like`, {});
   }
 }

@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Post, MediaItem } from '../../../interfaces/post.interface';
+import { Post } from '../../../interfaces/post.interface';
+import { MediaItemInterface } from '../../../interfaces/media-item.interface';
 import { PostService } from '../../../services/post.service';
 
 @Component({
@@ -24,7 +25,7 @@ export class PostDetailModalComponent {
     private cdr: ChangeDetectorRef
   ) {}
 
-  get mediaItems(): MediaItem[] {
+  get mediaItems(): MediaItemInterface[] {
     return this.post.media || [];
   }
 
@@ -32,7 +33,7 @@ export class PostDetailModalComponent {
     return this.mediaItems.length > 0;
   }
 
-  get currentMedia(): MediaItem | null {
+  get currentMedia(): MediaItemInterface | null {
     return this.mediaItems[this.currentMediaIndex] || null;
   }
 

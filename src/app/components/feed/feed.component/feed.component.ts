@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef, ViewContainerRef, ComponentRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PostService } from '../../../services/post.service';
-import { Post, PaginatedResponse } from '../../../interfaces/post.interface';
+import { Post } from '../../../interfaces/post.interface';
 import { CommonModule } from '@angular/common';
 import { PostCardComponent } from '../../post/post-card.component/post-card.component';
-import { PostDetailModalComponent } from '../../post/post-detail-modal.component/post-detail-modal.component'; // ← Add import
+import { PaginatedResponse } from '../../../interfaces/paginated-response.interface';
 
 @Component({
   selector: 'app-feed',
@@ -16,12 +16,10 @@ export class FeedComponent implements OnInit {
   posts: Post[] = [];
   currentPage = 1;
   lastPage = 1;
+  hasMorePages = true;
   isLoading = false;
 
-  constructor(
-    private postService: PostService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private postService: PostService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     console.log('FeedComponent ngOnInit — loading posts...');
@@ -29,19 +27,26 @@ export class FeedComponent implements OnInit {
   }
 
   loadPosts(page: number = 1): void {
-    if (this.isLoading) return;
+    if (this.isLoading || (page > 1 && !this.hasMorePages)) return;
+
     this.isLoading = true;
 
     this.postService.getPosts(page).subscribe({
       next: (response: PaginatedResponse<Post>) => {
+        const newPosts = response.data;
+
         if (page === 1) {
-          this.posts = response.data;
+          this.posts = newPosts;
         } else {
-          this.posts = [...this.posts, ...response.data];
+          this.posts = [...this.posts, ...newPosts];
         }
 
-        this.currentPage = response.current_page;
-        this.lastPage = response.last_page;
+        // Extract pagination info from meta
+        this.currentPage = response.meta.current_page;
+        this.lastPage = response.meta.last_page;
+        this.hasMorePages = response.meta.current_page < response.meta.last_page;
+        // Or simply: this.hasMorePages = !!response.links.next;
+
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -59,7 +64,9 @@ export class FeedComponent implements OnInit {
     post.likes_count += wasLiked ? -1 : 1;
 
     this.postService.toggleLike(post).subscribe({
-      next: () => { /* optimistic success */ },
+      next: () => {
+        /* optimistic success */
+      },
       error: () => {
         post.is_liked = wasLiked;
         post.likes_count += wasLiked ? 1 : -1;

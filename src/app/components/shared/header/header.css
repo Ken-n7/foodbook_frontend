@@ -11,14 +11,6 @@
     cursor: pointer;
 }
 
-/* Profile picture */
-.profile-img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    border: 2px solid #ff7a00;
-    object-fit: cover;
-}
 
 i{
   color: #ff7a00;

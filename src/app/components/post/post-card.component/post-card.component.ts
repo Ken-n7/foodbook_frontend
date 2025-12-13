@@ -1,10 +1,19 @@
 import { RouterLink } from '@angular/router';
-import { Component, Input, Output, EventEmitter, ComponentRef, ViewContainerRef, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ComponentRef,
+  ViewContainerRef,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '../../../interfaces/post.interface';
 import { PostService } from '../../../services/post.service';
-import { PostDetailModalComponent } from '../../post/post-detail-modal.component/post-detail-modal.component'; // ← Add import
-
+import { PostDetailModalComponent } from '../../post/post-detail-modal.component/post-detail-modal.component';
+// import { AuthService } from '../../../auth/auth.service';
+// import { ProfilePicture } from '../../shared/profile-picture/profile-picture';
 
 @Component({
   selector: 'app-post-card',
@@ -17,12 +26,21 @@ export class PostCardComponent {
   @Input() post!: Post;
   @Output() like = new EventEmitter<Post>();
   @Output() comment = new EventEmitter<Post>();
+  // @Input() yourUserId!: number;
+  @Input() currentUserId: number | null = null;
+  @Output() deleted = new EventEmitter<number>();
 
   constructor(
     private postService: PostService,
     private cdr: ChangeDetectorRef,
-    private viewContainerRef: ViewContainerRef
-  ) {}
+    private viewContainerRef: ViewContainerRef,
+    // private authService: AuthService
+  ) {
+    // this.authService.user$.subscribe(user => {
+    //   this.currentUserId = user?.id ?? null;
+    // });
+  }
+
   private modalRef?: ComponentRef<PostDetailModalComponent>;
 
   onLike(post: Post): void {
@@ -47,12 +65,7 @@ export class PostCardComponent {
     });
   }
 
-  // onComment(event: Event): void {
-  //   event.stopPropagation();
-  //   this.comment.emit(this.post);
-  // }
-
-    onComment(post: Post): void {
+  onComment(post: Post): void {
     this.openDetail(post); // Reuse the detail modal for comments too
   }
 
@@ -94,6 +107,32 @@ export class PostCardComponent {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
     alert('Link copied to clipboard!');
+  }
+
+  editPost(post: Post) {
+    console.log('Edit post', post.id);
+    // Implement your edit logic or open edit modal here
+  }
+
+  deletePost(post: Post): void {
+    if (!confirm('Are you sure you want to delete this post?')) {
+      return;
+    }
+
+    this.postService.deletePost(post.id).subscribe({
+      next: () => {
+        alert('Post deleted successfully.');
+        this.deleted.emit(post.id); // notify parent component
+      },
+      error: () => {
+        alert('Failed to delete the post. Please try again.');
+      },
+    });
+  }
+
+  reportPost(post: Post) {
+    console.log('Report post', post.id);
+    // No function for now, just a placeholder
   }
 
   // Helper: no need anymore, we get type from backend

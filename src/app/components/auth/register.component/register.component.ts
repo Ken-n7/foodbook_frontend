@@ -59,7 +59,7 @@ export class RegisterComponent {
         next: () => {
           this.closeModalIfExists();
           // Optional: auto-login after register or just go home
-          this.router.navigate(['/home']);
+          this.router.navigate(['/']);
         },
         error: (err: any) => {
           const msg = err?.error?.message || err?.message || 'Registration failed';
